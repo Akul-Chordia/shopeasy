@@ -25,6 +25,7 @@ class _AuthScreenState extends State<AuthScreen> {
     setState(() {});
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
