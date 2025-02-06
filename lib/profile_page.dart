@@ -1,23 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopeasy/home_page.dart';
 import 'cart_page.dart';
-import 'profile_page.dart';
+import 'bills.dart';
+import 'auth_screen.dart';
 
-class BillsPage extends StatelessWidget {
-  const BillsPage({Key? key}) : super(key: key);
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser; // Get the logged-in user
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Bills'),
+        title: const Text('Profile'),
         backgroundColor: Colors.black,
       ),
       body: Center(
-        child: const Text(
-          'Bills',
-          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.person, size: 100, color: Colors.white),
+            const SizedBox(height: 20),
+            Text(
+              user?.email ?? 'Guest User',
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => AuthScreen()),
+                );
+              },
+              child: const Text('Logout'),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -25,7 +47,7 @@ class BillsPage extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(
             icon: Padding(
-              padding: EdgeInsets.only(top: 20),
+              padding: EdgeInsets.only(top: 20), 
               child: Icon(Icons.home, size: 22, color: Colors.grey),
             ),
             backgroundColor: Colors.black,
@@ -41,14 +63,14 @@ class BillsPage extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 20),
-              child: Icon(Icons.receipt, size: 22, color: Colors.white),
+              child: Icon(Icons.receipt, size: 22, color: Colors.grey),
             ),
             label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(top: 20),
-              child: Icon(Icons.person, size: 22, color: Colors.grey),
+              child: Icon(Icons.person, size: 22, color: Colors.white),
             ),
             label: '',
           ),
@@ -69,13 +91,13 @@ class BillsPage extends StatelessWidget {
               );
               break;
             case 2:
-              Navigator.pushReplacementNamed(context, '/bills');
-              break;
-            case 3:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                MaterialPageRoute(builder: (context) => const BillsPage()),
               );
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/home');
               break;
           }
         },

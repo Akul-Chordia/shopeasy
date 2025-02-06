@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopeasy/home_page.dart';
 import 'bills.dart';
+import 'profile_page.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -71,10 +72,10 @@ class CartPage extends StatelessWidget {
               );
               break;
             case 3:
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const Profile_page()),
-              // );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
               break;
           }
         },

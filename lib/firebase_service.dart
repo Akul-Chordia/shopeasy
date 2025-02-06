@@ -10,6 +10,7 @@ class FirebaseService {
         .map((snapshot) => snapshot.docs
             .map((doc) => CartItem.fromFirestore(doc.data()))
             .toList());
+        
   }
 }
 
@@ -34,7 +35,7 @@ class CartItem {
       name: firestoreData['item_name'],
       quantity: firestoreData['quantity'],
       price: firestoreData['price'].toDouble(),
-      isPaid: firestoreData['is_paid'],
+      isPaid: firestoreData['isPaid'],
       bill_no: firestoreData['bill_no'],
     );
   }

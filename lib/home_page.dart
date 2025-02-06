@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'firebase_service.dart';  // Import the service
+import 'firebase_service.dart';  
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'cart_page.dart'; 
 import 'bills.dart';
+import 'profile_page.dart';
+import 'payments.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -32,7 +34,7 @@ class HomePage extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Current Cart',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 24, color: Colors.white),
               ),
             ),
           ),
@@ -54,39 +56,54 @@ class HomePage extends StatelessWidget {
 
                 // Data has arrived, build the list
                 final cartItems = snapshot.data!;
-                final totalCost = cartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+
+                final filteredCartItems = cartItems.where((item) => !item.isPaid).toList();
+
+                final totalCost = filteredCartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
                 final tax = totalCost * 0.18; // 18% tax
                 final totalWithTax = totalCost + tax;
+
+                
 
                 return Column(
                   children: [
                     // List of cart items
                     Expanded(
                       child: ListView.builder(
-                        itemCount: cartItems.length,
+                        itemCount: filteredCartItems.length,
                         itemBuilder: (context, index) {
-                          final item = cartItems[index];
+                          final item = filteredCartItems[index];
                           return Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            margin: const EdgeInsets.symmetric(vertical: 3.0),
                             decoration: BoxDecoration(
                               color: Colors.grey[800],
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: ListTile(
-                              title: Text(
-                                item.name,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              subtitle: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              title: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Quantity: ${item.quantity}',
-                                    style: const TextStyle(color: Colors.white),
+                                  SizedBox(
+                                    width: 170,
+                                    child: Text(
+                                      item.name,
+                                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
+                                  SizedBox(width: 10),
+                                  SizedBox(
+                                    width: 70,
+                                    child: Text(
+                                      '${item.quantity} x ${item.price}',
+                                      style: const TextStyle(color: Colors.white, fontSize: 11),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(width: 30),
                                   Text(
-                                    '\$${(item.price * item.quantity).toStringAsFixed(2)}',
-                                    style: const TextStyle(color: Colors.white),
+                                    'Rs ${(item.price*item.quantity).toStringAsFixed(2)}',
+                                    style: const TextStyle(color: Colors.white, fontSize: 16),
                                   ),
                                 ],
                               ),
@@ -96,15 +113,16 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0, right: 16.0, left: 16.0),
+                      padding: const EdgeInsets.only(top: 5.0, right: 16.0, left: 16.0),
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             // Now tax and totalWithTax are defined in the builder method
-                            Text('Tax: \$${tax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white)),
-                            Text('Total: \$${totalWithTax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white)),
+                            Text('Total: Rs ${totalCost.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 16)),
+                            Text('Tax: Rs ${tax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 13)),
+                            Text('Total: Rs ${totalWithTax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -113,9 +131,22 @@ class HomePage extends StatelessWidget {
                       padding: const EdgeInsets.all(16.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          // Handle payment action
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Payemnts()),
+                          );
                         },
-                        child: const Text('PAY NOW'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey, // Set background color to black
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24), // Adjust padding if needed
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18), // Optional: Rounded corners
+                          ),
+                        ),
+                        child: const Text(
+                          'PAY NOW',
+                          style: TextStyle(color: Colors.white), // Keep text color white
+                        ),
                       ),
                     ),
                   ],
@@ -177,10 +208,10 @@ class HomePage extends StatelessWidget {
               );
               break;
             case 3:
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const Profile_page()),
-              // );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
               break;
           }
         },
