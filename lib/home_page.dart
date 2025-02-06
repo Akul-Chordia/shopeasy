@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'firebase_service.dart';  
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'auth_service.dart';
 import 'cart_page.dart'; 
 import 'bills.dart';
 import 'profile_page.dart';
@@ -12,6 +13,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirebaseService _firebaseService = FirebaseService(); // Create Firebase service instance
+
+    String? userId = AuthService().getCurrentUserId();
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -41,6 +44,7 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: StreamBuilder<List<CartItem>>(
               stream: _firebaseService.getCartItems(),  // Fetch items from Firebase in real-time
+              
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -57,7 +61,10 @@ class HomePage extends StatelessWidget {
                 // Data has arrived, build the list
                 final cartItems = snapshot.data!;
 
-                final filteredCartItems = cartItems.where((item) => !item.isPaid).toList();
+                final unpaidCartItems = cartItems.where((item) => !item.isPaid).toList();
+
+                final filteredCartItems = unpaidCartItems.where((item) => item.UID == userId).toList();
+
 
                 final totalCost = filteredCartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
                 final tax = totalCost * 0.18; // 18% tax
@@ -120,8 +127,9 @@ class HomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             // Now tax and totalWithTax are defined in the builder method
-                            Text('Total: Rs ${totalCost.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 16)),
-                            Text('Tax: Rs ${tax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 13)),
+                            Text('Total:            Rs ${totalCost.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 15)),
+                            Text('Tax:                  Rs ${tax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 13)),
+                            Text('----------------------------', style: const TextStyle(color: Colors.white, fontSize: 13)),
                             Text('Total: Rs ${totalWithTax.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                           ],
                         ),
@@ -133,19 +141,19 @@ class HomePage extends StatelessWidget {
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const Payemnts()),
+                            MaterialPageRoute(builder: (context) => const Payments()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey, // Set background color to black
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24), // Adjust padding if needed
+                          backgroundColor: Colors.grey,
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18), // Optional: Rounded corners
+                            borderRadius: BorderRadius.circular(18),
                           ),
                         ),
                         child: const Text(
                           'PAY NOW',
-                          style: TextStyle(color: Colors.white), // Keep text color white
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
