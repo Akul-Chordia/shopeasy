@@ -3,21 +3,86 @@ import 'package:shopeasy/home_page.dart';
 import 'bills.dart';
 import 'profile_page.dart';
 
-class CartPage extends StatelessWidget {
+class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  final List<String> _groceryList = [];
+  final TextEditingController _controller = TextEditingController();
+
+  void _addItem() {
+    if (_controller.text.isNotEmpty) {
+      setState(() {
+        _groceryList.add(_controller.text);
+        _controller.clear();
+      });
+    }
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      _groceryList.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: const Text('Grocery List', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
-      body: Center(
-        child: const Text(
-          'This is the Cart Page',
-          style: TextStyle(color: Colors.white, fontSize: 24),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: 'Enter grocery item',
+                hintStyle: const TextStyle(color: Colors.white54),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  onPressed: _addItem,
+                ),
+              ),
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _groceryList.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.grey[800],
+                    child: ListTile(
+                      title: Text(
+                        _groceryList[index],
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.remove, color: Colors.white),
+                        onPressed: () => _removeItem(index),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

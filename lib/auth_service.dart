@@ -40,4 +40,11 @@ class AuthService {
   User? getCurrentUser() {
     return _auth.currentUser;
   }
+
+  // Get Current User ID
+String? getCurrentUserId() {
+  return _auth.currentUser?.uid;
 }
+
+}
+
