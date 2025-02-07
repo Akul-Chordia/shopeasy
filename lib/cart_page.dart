@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopeasy/home_page.dart';
 import 'bills.dart';
 import 'profile_page.dart';
+import 'firebase_service.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -11,22 +14,24 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final List<String> _groceryList = [];
+  final FirebaseService _firebaseService = FirebaseService();
   final TextEditingController _controller = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _addItem() {
-    if (_controller.text.isNotEmpty) {
-      setState(() {
-        _groceryList.add(_controller.text);
-        _controller.clear();
+  String get userId => _auth.currentUser?.uid ?? '';
+
+  void _addItem() async {
+    if (_controller.text.isNotEmpty && userId.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('GroceryList').add({
+        'UID': userId,
+        'item': _controller.text,
       });
+      _controller.clear();
     }
   }
 
-  void _removeItem(int index) {
-    setState(() {
-      _groceryList.removeAt(index);
-    });
+  void _removeItem(String itemId) async {
+    await FirebaseFirestore.instance.collection('GroceryList').doc(itemId).delete();
   }
 
   @override
@@ -63,21 +68,36 @@ class _CartPageState extends State<CartPage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemCount: _groceryList.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    color: Colors.grey[800],
-                    child: ListTile(
-                      title: Text(
-                        _groceryList[index],
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.remove, color: Colors.white),
-                        onPressed: () => _removeItem(index),
-                      ),
-                    ),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('GroceryList')
+                    .where('UID', isEqualTo: userId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final items = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      var item = items[index];
+                      return Card(
+                        color: Colors.grey[800],
+                        child: ListTile(
+                          title: Text(
+                            item['item'],
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.remove, color: Colors.white),
+                            onPressed: () => _removeItem(item.id),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
