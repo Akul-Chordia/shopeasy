@@ -48,25 +48,92 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(isLogin ? "Login" : "Register")),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(controller: _emailController, decoration: InputDecoration(labelText: "Email")),
-            TextField(controller: _passwordController, decoration: InputDecoration(labelText: "Password"), obscureText: true),
-            SizedBox(height: 20),
-            isLoading
-                ? CircularProgressIndicator()  // Show loader when processing
-                : ElevatedButton(
-                    onPressed: handleAuth,
-                    child: Text(isLogin ? "Login" : "Register"),
+      backgroundColor: Colors.black,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 80),
+              Text(
+                isLogin ? "Welcome Back!" : "Create Account",
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                isLogin ? "Login to continue" : "Sign up to get started",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              TextField(
+                controller: _emailController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: "Email",
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.grey[900],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
                   ),
-            TextButton(
-              onPressed: () => setState(() => isLogin = !isLogin),
-              child: Text(isLogin ? "Create an account" : "Already have an account? Login"),
-            ),
-          ],
+                  prefixIcon: const Icon(Icons.email, color: Colors.white70),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                style: const TextStyle(color: Colors.white),
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.grey[900],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.lock, color: Colors.white70),
+                ),
+              ),
+              const SizedBox(height: 30),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                  : ElevatedButton(
+                      onPressed: handleAuth,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        isLogin ? "Login" : "Register",
+                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () => setState(() => isLogin = !isLogin),
+                child: Text(
+                  isLogin ? "Don't have an account? Sign up" : "Already have an account? Login",
+                  style: const TextStyle(color: Colors.blueAccent),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
