@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'auth_screen.dart';
 import 'home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Stripe.publishableKey = 'YOUR-API-KEY';
+  Stripe.instance.applySettings();
   runApp(MyApp());
 }
 
