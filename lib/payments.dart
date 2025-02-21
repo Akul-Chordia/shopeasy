@@ -80,7 +80,7 @@ class _PaymentsState extends State<Payments> {
       final response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-          'Authorization': 'Bearer sk_XXXXXXXX-YOU-API-KEY',
+          'Authorization': 'Bearer sk_test_51Q3juAH1XCaiLE9lrMm5gnGDe2MIOzs1ZTPOVNGKGsCbcOCHZaAkpEEeTyryhvHA373yajvj8ruRRlKJGlpu0vlE00FVhnos8x',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {

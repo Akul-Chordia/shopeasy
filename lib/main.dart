@@ -8,7 +8,7 @@ import 'home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Stripe.publishableKey = 'YOUR-API-KEY';
+  Stripe.publishableKey = 'pk_test_51Q3juAH1XCaiLE9lF5AcoguX3t5QTm7AfgCUpVFYaFhpC0Wz0koTfi4WUMcCFj7OgxHjK6FuamnIO9DL75wnvaYc00HuxLSuDL';
   Stripe.instance.applySettings();
   runApp(MyApp());
 }
