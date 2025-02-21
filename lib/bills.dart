@@ -6,21 +6,21 @@ import 'profile_page.dart';
 import 'auth_service.dart';
 
 class BillsPage extends StatelessWidget {
-  const BillsPage({Key? key}) : super(key: key);
+  const BillsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseService _firebaseService = FirebaseService();
+    final FirebaseService firebaseService = FirebaseService();
     String? userId = AuthService().getCurrentUserId();
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Bills', style: const TextStyle(color: Colors.white),),
+        title: const Text('Bills', style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black,
       ),
       body: StreamBuilder<List<CartItem>>(
-        stream: _firebaseService.getCartItems(),
+        stream: firebaseService.getCartItems(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

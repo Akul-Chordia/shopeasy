@@ -11,7 +11,7 @@ import 'firebase_service.dart';
 class Payments extends StatefulWidget {
   final double totalWithTax;
 
-  const Payments({Key? key, required this.totalWithTax}) : super(key: key);
+  const Payments({super.key, required this.totalWithTax});
 
   @override
   State<Payments> createState() => _PaymentsState();
@@ -38,7 +38,7 @@ class _PaymentsState extends State<Payments> {
 
 
 
-    paymentIntent = await createPaymentIntent('${widget.totalWithTax.toStringAsFixed(2)}', 'USD');
+    paymentIntent = await createPaymentIntent(widget.totalWithTax.toStringAsFixed(2), 'USD');
 
     // Initialize Payment Sheet
     await Stripe.instance.initPaymentSheet(
@@ -80,7 +80,7 @@ class _PaymentsState extends State<Payments> {
       final response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-          'Authorization': 'Bearer sk_test_51Q3juAH1XCaiLE9lrMm5gnGDe2MIOzs1ZTPOVNGKGsCbcOCHZaAkpEEeTyryhvHA373yajvj8ruRRlKJGlpu0vlE00FVhnos8x',
+          'Authorization': 'XXXXXXXXXXAPIKEY',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {

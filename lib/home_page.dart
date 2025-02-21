@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseService _firebaseService = FirebaseService(); // Create Firebase service instance
+    final FirebaseService firebaseService = FirebaseService(); // Create Firebase service instance
 
     String? userId = AuthService().getCurrentUserId();
 
@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
           ),
           Expanded(
             child: StreamBuilder<List<CartItem>>(
-              stream: _firebaseService.getCartItems(),  // Fetch items from Firebase in real-time
+              stream: firebaseService.getCartItems(),  // Fetch items from Firebase in real-time
               
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
